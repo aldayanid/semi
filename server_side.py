@@ -12,7 +12,6 @@ def create_connection(path_to_db: str) -> Optional[Connection]:
         print("Connection to SQLite DB successful")
     except Error as e:
         print("The error", e, "occurred")
-
     return connection
 
 
@@ -26,7 +25,16 @@ def exec_request(request_number: int, connection: Optional[Connection]) -> str:
             query_result += str(record) + "\n"
         return query_result
     elif request_number == 2:
-        result = cursor.execute("SELECT * FROM laptops;")
+        result = cursor.execute("""INSERT INTO laptops VALUES (
+                        004,
+                        'Lenovo',
+                        'P1',
+                        10,
+                        'Xeon',
+                        2,
+                        64
+                    );""")
+        connection.commit()
         return result
     else:
         return "Quit"
