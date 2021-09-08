@@ -2,18 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="69524a3e-f8bd-488d-9103-bed634b1f003" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/semifinal.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/stations.db" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/test.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../RTG Python 3 Slides Shmuel 2018-06-17 V4.pdf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../mywork/plan_b.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../mywork/ytless1.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server_side.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client.py" beforeDir="false" afterPath="$PROJECT_DIR$/client.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/station_1.txt" beforeDir="false" afterPath="$PROJECT_DIR$/station_1.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/station_2.txt" beforeDir="false" afterPath="$PROJECT_DIR$/station_2.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/station_3.txt" beforeDir="false" afterPath="$PROJECT_DIR$/station_3.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -28,7 +21,7 @@
     </option>
   </component>
   <component name="Git.Settings">
-    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../.." />
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="ProjectId" id="1xMAi0k8tHIQ70a9gI5hwz6Exc4" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true">
@@ -45,6 +38,7 @@
     <property name="com.intellij.ide.scratch.ScratchImplUtil$2/New Scratch File" value="JSON" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="restartRequiresConfirmation" value="false" />
+    <property name="settings.editor.selected.configurable" value="preferences.toDoOptions" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">

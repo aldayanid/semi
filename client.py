@@ -17,9 +17,7 @@ def select_file(selected_num: int) -> str:
         elif selected_num == 3:
             return str("station_3.txt")
     except NameError:
-            print("Error! Please use only one of these numbers: 1, 2, 3")
-
-# How to get rid of the errors???
+            print("Error! Please use only one of these numbers: 1, 2, 3")  ##  TODO How to get rid of the errors???
 
 
 def read_from_file(file_name: str) -> str:
