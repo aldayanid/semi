@@ -1,4 +1,4 @@
-import sys
+import json
 import socket
 
 BUFFER_SIZE = 1024
@@ -22,9 +22,11 @@ def select_file(selected_num: int) -> str:
 # How to get rid of the errors???
 
 
-def read_from_file(file_name: str) -> list:
+def read_from_file(file_name: str) -> str:
     with open(file_name, 'r', encoding=UTF8) as file:
-        return file.read().split("\n")
+        current_status = file.read().split("\n")
+        json_current_status = json.dumps(current_status)
+        return json_current_status
 
 
 def send_to_server(data_from_file: str) -> bool:
@@ -38,7 +40,7 @@ def send_to_server(data_from_file: str) -> bool:
 def main():
     selected_num = int(input("Please select the station number,\njust input the number of station:\n 1, 2 or 3:\n"))
     selected_file_name = select_file(selected_num)
-    data_from_file = str(read_from_file(selected_file_name))
+    data_from_file = read_from_file(selected_file_name)
     print(data_from_file)
     send_to_server(data_from_file)
 

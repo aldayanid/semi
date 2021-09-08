@@ -3,6 +3,7 @@ from sqlite3 import Error, Connection
 from typing import Optional
 from datetime import datetime
 import socket
+import json
 
 
 BUFFER_SIZE = 1024
@@ -13,7 +14,7 @@ PATH_DB = "stations.db"
 
 DB_CREATE_TABLE = """
 CREATE TABLE IF NOT EXISTS stations (
-    time TIMESTAMP
+    time TIMESTAMP,
     st_num INT,
     flag_1 INT,
     flag_2 INT    
@@ -36,15 +37,16 @@ def insert_to_db(station_status: tuple, db_connection: Optional[Connection]) -> 
 
     st_num, flag_1, flag_2 = station_status
 
-    result = cursor.execute(DB_INSERT_ROW, (time_st, st_num, flag_1, flag_2))
+    result = cusor.execute(DB_INSERT_ROW, (time_st, st_num, flag_1, flag_2))
     db_connection.commit()
 
     return result
 
 
 def convert_from_raw(bytes_array: bytes) -> tuple:
-    print()
-    return tuple(bytes_array.decode(UTF8))
+    received_array = bytes_array.decode(UTF8)
+    json_current_status = json.loads(received_array)
+    return json_current_status
 
 
 def create_connection(path_db: str) -> Optional[Connection]:
