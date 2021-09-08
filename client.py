@@ -3,7 +3,7 @@ import socket
 
 BUFFER_SIZE = 1024
 HOST = '127.0.0.1'
-PORT = '8080'
+PORT = 8080
 UTF8 = 'UTF-8'
 
 
@@ -28,8 +28,8 @@ def read_from_file(file_name: str) -> list:
 
 
 def send_to_server(data_from_file: str) -> bool:
-    with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as sock:
-        sock.bind((HOST, PORT))
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+        sock.connect((HOST, PORT))
         sock.send(data_from_file.encode(UTF8))
         status = sock.recv(BUFFER_SIZE)
         print(status, "has been received")
