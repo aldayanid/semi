@@ -1,6 +1,7 @@
 import sqlite3
 from sqlite3 import Error, Connection
 from typing import Optional
+from datetime import datetime
 import socket
 
 
@@ -24,18 +25,26 @@ DB_INSERT_ROW = """
     (?, ?, ?, ?);
     """
 
-def insert_to_db(station_status: str, db_connection: Optional[Connection]) -> str:
-# check if database exists, if not create it
+
+def insert_to_db(station_status: tuple, db_connection: Optional[Connection]) -> str:
     with sqlite3.connect(PATH_DB) as conn:
         conn.execute(DB_CREATE_TABLE)
     cursor = db_connection.cursor()
-    result = cursor.execute(DB_INSERT_ROW)
+
+    timestamp = datetime.now()
+    time_st = timestamp.strftime("%Y-%m-%d %H:%M:%S")  # TODO: milliseconds
+
+    st_num, flag_1, flag_2 = station_status
+
+    result = cursor.execute(DB_INSERT_ROW, (time_st, st_num, flag_1, flag_2))
     db_connection.commit()
+
     return result
 
 
-def convert_from_raw(bytes_array: bytes) -> str:
-    return str(bytes_array.decode(UTF8))
+def convert_from_raw(bytes_array: bytes) -> tuple:
+    print()
+    return tuple(bytes_array.decode(UTF8))
 
 
 def create_connection(path_db: str) -> Optional[Connection]:
@@ -49,11 +58,12 @@ def create_connection(path_db: str) -> Optional[Connection]:
 
 
 def handle_request(sock: socket.socket, db_connection: Connection) -> None:
-    # station_status_raw = sock.recv(BUFFER_SIZE)
-    # station_status = convert_from_raw(station_status_raw)
-    # status = insert_to_db(station_status, db_connection)
-    # sock.send(status.encode(UTF8))
-    print(sock, db_connection)
+    station_status_raw = sock.recv(BUFFER_SIZE)
+    station_status = convert_from_raw(station_status_raw)
+    print("Station status:", station_status)
+    status = insert_to_db(station_status, db_connection)
+    print("Status:", status)
+    sock.send(status.encode(UTF8))
 
 
 def main():
