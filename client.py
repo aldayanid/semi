@@ -4,7 +4,7 @@ from subprocess import Popen
 
 BUFFER_SIZE = 1024
 HOST = '127.0.0.1'
-PORT = 8888
+PORT = 62434
 UTF8 = 'UTF-8'
 
 
@@ -31,10 +31,11 @@ def read_from_file(file_name: str) -> list:
 def send_to_server(data_from_file: str) -> bool:
     #Popen("python server.py")
     with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as sock:
-        sock.bind((HOST, PORT))
+        sock.connect((HOST, PORT))
         sock.send(data_from_file.encode(UTF8))
-        status = sock.recv(BUFFER_SIZE)
-        print(status, "has been received")
+        # status = sock.recv(BUFFER_SIZE)
+        # sock.close()
+        # print(status, "has been received")
 
 
 def main():

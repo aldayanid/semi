@@ -8,7 +8,7 @@ from typing import Optional
 
 BUFFER_SIZE = 1024
 HOST = '127.0.0.1'
-PORT = 8888
+PORT = 62434
 UTF8 = 'UTF-8'
 PATH_DB = "stations.db"
 
@@ -41,40 +41,54 @@ def insert_to_db(station_status: str, db_connection: Optional[Connection]) -> st
     return result
 
 
-def convert_from_raw(bytes_array: bytes) -> str:
-    decoded_array = str(bytes_array.decode(UTF8))
-    print(decoded_array)
-    return decoded_array
-
-def create_db_connection(PATH_DB: str) -> Optional[Connection]:
+def create_db_connection(path: str) -> Optional[Connection]:
     if os.path.exists(PATH_DB):
         print("Stations database file does exist")
-        db_connection = sqlite3.connect(PATH_DB)
+        db_connection = sqlite3.connect(path)
         print("Connection to SQLite DB is successful")
-        handle_request(db_connection)
         return db_connection
     else:
         print("DB doesn't exist, but we gonna fix it")
-        db_connection = sqlite3.connect(PATH_DB)
+        db_connection = sqlite3.connect(path)
         curs = db_connection.cursor()
         curs.execute(DB_CREATE_TABLE)
         db_connection.commit()
         return db_connection
 
 
-def handle_request(sock: socket.socket, db_connection: Connection) -> None:
-    station_status_raw = sock.recv(BUFFER_SIZE)
-    station_status = convert_from_raw(station_status_raw)
+def handle_request(sock: socket.socket, bytes_array: bytes, db_connection: Connection) -> None:
+    station_status = str(bytes_array.decode(UTF8))
     status = insert_to_db(station_status, db_connection)
     sock.send(status.encode(UTF8))
 
+def convert_from_raw(bytes_array: bytes) -> str:
+    decoded_array = str(bytes_array.decode(UTF8))
+    print(decoded_array)
+    return decoded_array
 
 def main():
-    while True:
-        with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as sock:
-            sock.bind((HOST, PORT))
-            db_connection = create_db_connection(PATH_DB)
-            handle_request(sock, db_connection)
+    # while True:
+    #     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server_sock:
+    #         server_sock.bind((HOST, PORT))
+    #         print("Starting up on IP:", HOST, "port:", PORT)
+    #         server_sock.listen(5)
+    #         while True:
+    #             print("Waiting for a connection")
+    #             connection, addr = server_sock.accept()
+    #             try:
+    #                 data_from_client = connection.recv(BUFFER_SIZE)
+    #                 print("received: ", data_from_client)
+    #                 db_connection = create_db_connection(PATH_DB)
+    #                 handle_request(server_sock, db_connection, data_from_client)
+    #             #except??
+    #             finally:
+    #                 pass
+    db_connection = create_db_connection(PATH_DB)
+    with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as sock:
+        sock.bind((HOST, PORT))
+        sock.listen(5)
+        connection, addr = sock.accept()
+        handle_request(connection, db_connection)
 
 
 if __name__ == '__main__':
