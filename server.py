@@ -33,11 +33,11 @@ def insert_to_db(station_status: tuple, db_connection: Optional[Connection]) -> 
     cursor = db_connection.cursor()
 
     timestamp = datetime.now()
-    time_st = timestamp.strftime("%Y-%m-%d %H:%M:%S")  # TODO: milliseconds
+    time_st = timestamp.strftime("%Y-%m-%d %H:%M:%S")  # TODO milliseconds
 
     st_num, flag_1, flag_2 = station_status
 
-    result = cusor.execute(DB_INSERT_ROW, (time_st, st_num, flag_1, flag_2))
+    result = cursor.execute(DB_INSERT_ROW, (time_st, st_num, flag_1, flag_2))
     db_connection.commit()
 
     return result
@@ -63,9 +63,10 @@ def handle_request(sock: socket.socket, db_connection: Connection) -> None:
     station_status_raw = sock.recv(BUFFER_SIZE)
     station_status = convert_from_raw(station_status_raw)
     print("Station status:", station_status)
-    status = insert_to_db(station_status, db_connection)
-    print("Status:", status)
-    sock.send(status.encode(UTF8))
+    status_raw = insert_to_db(station_status, db_connection)
+    print("Status:", station_status)
+    station_status_str = " ".join(map(str, station_status))
+    sock.send(station_status_str.encode(UTF8))
 
 
 def main():
