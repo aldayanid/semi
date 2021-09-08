@@ -9,16 +9,16 @@ UTF8 = 'UTF-8'
 
 def select_file(selected_num: int) -> str:
 
-    while 1:
+    try:
         if selected_num == 1:
             return str("station_1.txt")
         elif selected_num == 2:
             return str("station_2.txt")
         elif selected_num == 3:
             return str("station_3.txt")
-        else:
+    except NameError:
             print("Error! Please use only one of these numbers: 1, 2, 3")
-            break
+
 # How to get rid of the errors???
 
 
@@ -29,19 +29,19 @@ def read_from_file(file_name: str) -> str:
         return json_current_status
 
 
-def send_to_server(data_from_file: str) -> bool:
+def send_to_server(data_from_file: str):
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
         sock.connect((HOST, PORT))
         sock.send(data_from_file.encode(UTF8))
-        status = sock.recv(BUFFER_SIZE)
-        print(status, "has been received")
+        status_bytes = sock.recv(BUFFER_SIZE)
+        print("Received from the server:", status_bytes.decode(UTF8))
 
 
 def main():
     selected_num = int(input("Please select the station number,\njust input the number of station:\n 1, 2 or 3:\n"))
     selected_file_name = select_file(selected_num)
     data_from_file = read_from_file(selected_file_name)
-    print(data_from_file)
+    print("Sending to the server:", data_from_file)
     send_to_server(data_from_file)
 
 
