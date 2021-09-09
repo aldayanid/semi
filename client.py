@@ -1,11 +1,12 @@
 import json
 import socket
+import time
 
 BUFFER_SIZE = 1024
 HOST = '127.0.0.1'
 PORT = 8080
 UTF8 = 'UTF-8'
-
+TIMEOUT = 5
 
 def select_file(selected_num: int) -> str:
 
@@ -37,11 +38,12 @@ def send_to_server(data_from_file: str):
 
 def main():
     selected_num = int(input("Please select the station number,\njust input the number of station:\n 1, 2 or 3:\n"))
-    selected_file_name = select_file(selected_num)
-    data_from_file = read_from_file(selected_file_name)
-    print("Sending to the server:", data_from_file)
-    send_to_server(data_from_file)
-
+    while True:
+        selected_file_name = select_file(selected_num)
+        data_from_file = read_from_file(selected_file_name)
+        print("Sending to the server:", data_from_file)
+        send_to_server(data_from_file)
+        time.sleep(5)
 
 if __name__ == '__main__':
     main()
