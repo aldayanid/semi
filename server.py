@@ -37,10 +37,10 @@ def insert_to_db(station_status: tuple, db_connection: Optional[Connection]) -> 
 
     st_num, flag_1, flag_2 = station_status
 
-    result = cursor.execute(DB_INSERT_ROW, (time_st, st_num, flag_1, flag_2))
+    station_status = cursor.execute(DB_INSERT_ROW, (time_st, st_num, flag_1, flag_2))
     db_connection.commit()
-
-    return result
+    print(timestamp, "and", st_num, flag_1, flag_2, "have been successfully added to the DB")
+    return station_status, timestamp
 
 
 def convert_from_raw(bytes_array: bytes) -> tuple:
@@ -62,9 +62,9 @@ def create_connection(path_db: str) -> Optional[Connection]:
 def handle_request(sock: socket.socket, db_connection: Connection) -> None:
     station_status_raw = sock.recv(BUFFER_SIZE)
     station_status = convert_from_raw(station_status_raw)
-    print("Station status:", station_status)
-    status_raw = insert_to_db(station_status, db_connection)
-    print("Status:", station_status)
+
+    insert_to_db(station_status, db_connection)
+
     station_status_str = " ".join(map(str, station_status))
     sock.send(station_status_str.encode(UTF8))
 
