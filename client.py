@@ -32,12 +32,13 @@ def send_to_server(data_from_file: str):
         sock.connect((HOST, PORT))
         sock.send(data_from_file.encode(UTF8))
         status_bytes = sock.recv(BUFFER_SIZE)
+        print("Sending to the server:", data_from_file)
         print("Receiving from the server:", status_bytes.decode(UTF8))
 
 
 def main():
     selected_num = int(input("Please select the station number,\njust input the number of station:\n"
-                             "1, 2 or 3:\nOr just type any kye for quit\n"))
+                             "1, 2 or 3:\nOr press any other kye to quit\n"))
 
     while True:
         selected_file_name = select_file(selected_num)
@@ -47,7 +48,6 @@ def main():
 
         data_from_file = read_from_file(selected_file_name)
         send_to_server(data_from_file)
-        print("Sending to the server:", data_from_file)
         time.sleep(TIME_INTERVAL)
 
 

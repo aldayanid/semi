@@ -24,28 +24,21 @@ DB_INSERT_ROW = """
     (?, ?, ?, ?
     );"""
 
-DB_SELECT_ALL = """
-    SELECT * FROM stations
-    );"""
 
 def insert_to_db(station_status: tuple, db_connection: Optional[Connection]) -> str:
-    with sqlite3.connect(PATH_DB) as conn:
-        conn.execute(DB_CREATE_TABLE)
     curs = db_connection.cursor()
 
     timestamp = datetime.now()
-    time_st = timestamp.strftime("%Y-%m-%d %H:%M")
-
+    time_st = timestamp.strftime("%Y-%m-%d %H:%M:%S")
     st_num, alarm_1, alarm_2 = station_status
     station_status = curs.execute(DB_INSERT_ROW, (st_num, time_st, alarm_1, alarm_2))
     db_connection.commit()
-    print(curs.lastrowid, timestamp, station_status, "have been successfully added to the DB")
+    return station_status
 
 
 def read_from_db(db_connection: Optional[Connection]) -> str:
     curs = db_connection.execute("SELECT * FROM stations")
     last_row_from_db = curs.fetchone()
-    print("Read from DB: ", last_row_from_db)
     last_row_str = " ".join(map(str, last_row_from_db))
     return  last_row_str
 
@@ -56,10 +49,11 @@ def convert_from_raw(bytes_array: bytes) -> tuple:
     return json_current_status
 
 
-def create_connection(path_db: str) -> Optional[Connection]:
+def create_db_connection(path_db: str) -> Optional[Connection]:
     db_connection = None
     try:
         db_connection = sqlite3.connect(path_db)
+        db_connection.execute(DB_CREATE_TABLE)
         print("Connection to SQLite DB successful")
     except Error as err:
         print("The error", err, "occurred")
@@ -70,14 +64,13 @@ def handle_request(sock: socket.socket, db_connection: Connection) -> None:
     station_status_raw = sock.recv(BUFFER_SIZE)
     station_status = convert_from_raw(station_status_raw)
     insert_to_db(station_status, db_connection)
-
     station_status_str = read_from_db(db_connection)
     print("Feedback: ", station_status_str)
     sock.send(station_status_str.encode(UTF8))
 
 
 def main():
-    db_connection = create_connection(PATH_DB)
+    db_connection = create_db_connection(PATH_DB)
     with socket.create_server((HOST, PORT)) as server:
         while True:
             sock, addr = server.accept()
