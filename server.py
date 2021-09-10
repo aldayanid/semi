@@ -5,7 +5,6 @@ from datetime import datetime
 import socket
 import json
 
-
 BUFFER_SIZE = 1024
 HOST = '127.0.0.1'
 PORT = 8080
@@ -13,34 +12,42 @@ UTF8 = 'UTF-8'
 PATH_DB = "stations.db"
 
 DB_CREATE_TABLE = """
-CREATE TABLE IF NOT EXISTS stations (
-    time TIMESTAMP,
-    st_num INT,
-    flag_1 INT,
-    flag_2 INT    
-);
-"""
+    CREATE TABLE IF NOT EXISTS stations (
+    st_num INTEGER,
+    time_st TIMESTAMP, 
+    alarm_1 INTEGER,
+    alarm_2 INTEGER    
+    );"""
 
 DB_INSERT_ROW = """
     INSERT INTO stations VALUES
-    (?, ?, ?, ?);
-    """
+    (?, ?, ?, ?
+    );"""
 
+DB_SELECT_ALL = """
+    SELECT * FROM stations
+    );"""
 
 def insert_to_db(station_status: tuple, db_connection: Optional[Connection]) -> str:
     with sqlite3.connect(PATH_DB) as conn:
         conn.execute(DB_CREATE_TABLE)
-    cursor = db_connection.cursor()
+    curs = db_connection.cursor()
 
     timestamp = datetime.now()
-    time_st = timestamp.strftime("%Y-%m-%d %H:%M:%S")  # TODO milliseconds
+    time_st = timestamp.strftime("%Y-%m-%d %H:%M")
 
-    st_num, flag_1, flag_2 = station_status
-
-    station_status = cursor.execute(DB_INSERT_ROW, (time_st, st_num, flag_1, flag_2))
+    st_num, alarm_1, alarm_2 = station_status
+    station_status = curs.execute(DB_INSERT_ROW, (st_num, time_st, alarm_1, alarm_2))
     db_connection.commit()
-    print(timestamp, "and", st_num, flag_1, flag_2, "have been successfully added to the DB")
-    return station_status, timestamp
+    print(curs.lastrowid, timestamp, station_status, "have been successfully added to the DB")
+
+
+def read_from_db(db_connection: Optional[Connection]) -> str:
+    curs = db_connection.execute("SELECT * FROM stations")
+    last_row_from_db = curs.fetchone()
+    print("Read from DB: ", last_row_from_db)
+    last_row_str = " ".join(map(str, last_row_from_db))
+    return  last_row_str
 
 
 def convert_from_raw(bytes_array: bytes) -> tuple:
@@ -62,10 +69,10 @@ def create_connection(path_db: str) -> Optional[Connection]:
 def handle_request(sock: socket.socket, db_connection: Connection) -> None:
     station_status_raw = sock.recv(BUFFER_SIZE)
     station_status = convert_from_raw(station_status_raw)
-
     insert_to_db(station_status, db_connection)
 
-    station_status_str = " ".join(map(str, station_status))
+    station_status_str = read_from_db(db_connection)
+    print("Feedback: ", station_status_str)
     sock.send(station_status_str.encode(UTF8))
 
 
