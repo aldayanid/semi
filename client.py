@@ -6,19 +6,18 @@ BUFFER_SIZE = 1024
 HOST = '127.0.0.1'
 PORT = 8080
 UTF8 = 'UTF-8'
-TIMEOUT = 5
+TIME_INTERVAL = 5
+
 
 def select_file(selected_num: int) -> str:
-
-    try:
-        if selected_num == 1:
-            return str("station_1.txt")
-        elif selected_num == 2:
-            return str("station_2.txt")
-        elif selected_num == 3:
-            return str("station_3.txt")
-    except NameError:
-            print("Error! Please use only one of these numbers: 1, 2, 3")  ##  TODO How to get rid of the errors???
+    if selected_num == 1:
+        return "station_1.txt"
+    elif selected_num == 2:
+        return "station_2.txt"
+    elif selected_num == 3:
+        return "station_3.txt"
+    else:
+        return None
 
 
 def read_from_file(file_name: str) -> str:
@@ -33,17 +32,24 @@ def send_to_server(data_from_file: str):
         sock.connect((HOST, PORT))
         sock.send(data_from_file.encode(UTF8))
         status_bytes = sock.recv(BUFFER_SIZE)
-        print("Received from the server:", status_bytes.decode(UTF8))
+        print("Receiving from the server:", status_bytes.decode(UTF8))
 
 
 def main():
-    selected_num = int(input("Please select the station number,\njust input the number of station:\n 1, 2 or 3:\n"))
+    selected_num = int(input("Please select the station number,\njust input the number of station:\n"
+                             "1, 2 or 3:\nOr just type any kye for quit\n"))
+
     while True:
         selected_file_name = select_file(selected_num)
+        if selected_file_name is None:
+            print("Terminating the script.")
+            quit()
+
         data_from_file = read_from_file(selected_file_name)
-        print("Sending to the server:", data_from_file)
         send_to_server(data_from_file)
-        time.sleep(5)
+        print("Sending to the server:", data_from_file)
+        time.sleep(TIME_INTERVAL)
+
 
 if __name__ == '__main__':
     main()
