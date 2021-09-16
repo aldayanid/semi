@@ -76,12 +76,16 @@ def handle_request(sock: socket.socket, db_connection: Connection) -> None:
 
 
 def main():
-    db_connection = create_db_connection(PATH_DB)
-    with socket.create_server((HOST, PORT)) as server:
         while True:
-            sock, addr = server.accept()
-            print("Client address:", addr)
-            handle_request(sock, db_connection)
+            db_connection = create_db_connection(PATH_DB)
+            try:
+                server = socket.create_server((HOST, PORT))
+                sock, addr = server.accept()
+                server.close()
+                handle_request(sock, db_connection)
+            except socket.error as err:
+                print("Error while connecting: ", err)
+                quit()
 
 
 if __name__ == '__main__':
