@@ -9,27 +9,32 @@ BUFFER_SIZE = 1024
 HOST = '127.0.0.1'
 PORT = 8080
 UTF8 = 'UTF-8'
-PATH_DB = "stations.db"
+PATH_DB = 'stations.db'
 
-DB_CREATE_TABLE = """
+DB_CREATE_TABLE = '''
     CREATE TABLE IF NOT EXISTS stations (
     st_num INTEGER,
     time_st TIMESTAMP, 
     alarm_1 INTEGER,
     alarm_2 INTEGER    
-    );"""
+    );'''
 
-DB_INSERT_ROW = """
+DB_INSERT_ROW = '''
     INSERT INTO stations VALUES
     (?, ?, ?, ?
-    );"""
+    );'''
+
+DB_LAST_ROW = '''
+    SELECT * FROM stations
+    ORDER BY time_st
+    DESC LIMIT 1'''
 
 
 def insert_to_db(station_status: tuple, db_connection: Optional[Connection]) -> str:
     curs = db_connection.cursor()
 
     timestamp = datetime.now()
-    time_st = timestamp.strftime("%Y-%m-%d %H:%M:%S")
+    time_st = timestamp.strftime('%Y-%m-%d %H:%M:%S.%f')[:-4]
     st_num, alarm_1, alarm_2 = station_status
     station_status = curs.execute(DB_INSERT_ROW, (st_num, time_st, alarm_1, alarm_2))
     db_connection.commit()
@@ -37,8 +42,9 @@ def insert_to_db(station_status: tuple, db_connection: Optional[Connection]) -> 
 
 
 def read_from_db(db_connection: Optional[Connection]) -> str:
-    curs = db_connection.execute("SELECT * FROM stations")
-    last_row_from_db = curs.fetchone()
+    cursor = db_connection.execute(DB_LAST_ROW)
+    last_row_from_db = cursor.fetchone()
+    print("The last row is: ", last_row_from_db)
     last_row_str = " ".join(map(str, last_row_from_db))
     return  last_row_str
 
